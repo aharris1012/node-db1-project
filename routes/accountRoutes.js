@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Db = require("../data/dbConfig");
+router.use(express.json());
 
 
 
@@ -10,21 +11,19 @@ router.get("/", (req, res) => {
       res.status(200).json(accounts);
     })
     .catch(err => {
-      res
-        .status(500)
+      res.status(500)
         .json({ message: "Could not retrieve data from database" });
     });
 });
 
 router.get("/:id", (req, res) => {
-  const { id } = req.params;
-  Db.get(id)
+  Db("accounts")
+  .where({id: req.params.id})
     .then(accounts => {
-      res.json(accounts);
+      res.status(200).json(accounts);
     })
     .catch(() => {
-      res
-        .status(500)
+      res.status(500)
         .json({ message: "Error retrieving account from database." });
     });
 });
@@ -35,11 +34,10 @@ router.post("/", (req, res) => {
   const account = req.body;
   if (account.name && account.budget) {
     //  INSERT INTO Accounts (account)
-    Db("Accounts")
+    Db("accounts")
       .insert(account)
       .then(account => {
-        res
-          .status(200)
+        res.status(200)
           .json({ message: "Created new account.", response: account });
       })
       .catch(err => {
@@ -58,12 +56,11 @@ router.post("/", (req, res) => {
 
 
 router.put("/:id", (req, res) => {
-  const { id } = req.params;
   Db("accounts")
-    .where({ id })
+    .where({ id: req.params.id})
     .update(req.body)
     .then(updVal => {
-      res.json(updVal);
+      res.status(200).json(updVal);
     })
     .catch(error => {
       console.log("put error");
@@ -74,18 +71,15 @@ router.put("/:id", (req, res) => {
 
 
 router.delete("/:id", (req, res) => {
-  const { id } = req.params;
   Db("accounts")
-    .where({ id })
+    .where("id", req.params.id)
     .del()
     .then(deleted => {
-      res.json(deleted);
+      res.status(200).json(deleted);
     })
     .catch(error => {
       console.log("delete error");
-      res
-        .status(500)
-        .json({ message: "Error removing account from database." });
+      res.status(500).json({ message: "Error removing account from database." });
     });
 });
 

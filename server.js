@@ -1,5 +1,5 @@
 const express = require('express');
-const accountsRoutes = require("./routes/accountRoutes");
+const accountRoutes = require("./routes/accountRoutes");
 
 const server = express();
 
@@ -7,6 +7,7 @@ server.use(express.json());
 server.get("/", (req, res) => {
     res.status(200).json({ message: "gooodd!" });
   });
-  server.use("/accounts", accountRoutes);
+  
+  server.use("/api/accounts", accountRoutes);
 
 module.exports = server;
